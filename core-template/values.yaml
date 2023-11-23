@@ -3,12 +3,14 @@
 # Declare variables to be passed into your templates.
 namespace: development
 replicaCount: 3
-
+app_name: application-name
 image:
   repository: artifactory-dev/nginx
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
+Labels: 
+   environment: dev
 
 imagePullSecrets: []
 nameOverride: ""

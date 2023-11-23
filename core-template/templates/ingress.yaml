@@ -1,5 +1,4 @@
 {{- if .Values.ingress.enabled -}}
-{{- $fullName := include "core-template.fullname" . -}}
 {{- $svcPort := .Values.service.port -}}
 {{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
   {{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
@@ -15,10 +14,13 @@ apiVersion: extensions/v1beta1
 {{- end }}
 kind: Ingress
 metadata:
-  name: {{ $fullName }}
+  name: {{ .Values.app_name }}-ing
   namespace: {{ .Values.namespace }}
   labels:
-    {{- include "core-template.labels" . | nindent 4 }}
+    app: {{ .Values.app_name }}
+	{{- with .Values.Labels }}
+        {{- toYaml . | nindent 4 }}
+        {{- end }}
   {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -50,11 +52,11 @@ spec:
             backend:
               {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
               service:
-                name: {{ $fullName }}
+                name: {{ .Values.app_name }}-svc
                 port:
                   number: {{ $svcPort }}
               {{- else }}
-              serviceName: {{ $fullName }}
+              serviceName: {{ .Values.app_name }}-svc
               servicePort: {{ $svcPort }}
               {{- end }}
           {{- end }}
