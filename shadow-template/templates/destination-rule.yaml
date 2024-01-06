@@ -1,0 +1,27 @@
+{{- if .Values.istio.enabled -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: {{ .Values.app_name }}-vs
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.app_name }}
+	{{- with .Values.Labels }}
+        {{- toYaml . | nindent 4 }}
+        {{- end }}
+spec:
+  hosts:
+    - {{ .Values.app_name }}-svc.{{ .Values.namespace }}.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
+    loadBalancer:
+      simple: LEAST_REQUEST
+  subsets:
+  - name: testversion-{{ .Values.version }}
+    labels:
+      version: {{ .Values.version }}
+  - name: primary
+    labels:
+      version: primary
+{{- end }}

@@ -1,0 +1,42 @@
+{{- if .Values.istio.enabled -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ .Values.app_name }}-vs
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.app_name }}
+	{{- with .Values.Labels }}
+        {{- toYaml . | nindent 4 }}
+        {{- end }}
+spec:
+  {{- if eq .Values.istio.gateway "" }}
+  hosts:
+    - {{ .Values.app_name }}-svc.{{ .Values.namespace }}.svc.cluster.local
+  {{- end }}
+  {{- if ne .Values.istio.gateway "" }}
+  hosts:
+    - {{ .Values.istio.hosts }}
+  gateways:
+    - {{ .Values.istio.gateway }}
+  {{- end }}
+  http:
+  - match:
+    - uri:
+        prefix: {{ .Values.istio.prefix }}
+    {{- if ne .Values.istio.rewite "" }}
+    rewrite:
+      uri: {{ .Values.istio.rewrite }}   
+    {{- end }}
+    route:
+      - destination:
+          host: {{ .Values.app_name }}-svc.{{ .Values.namespace }}.svc.cluster.local
+          subset: primary
+          port:
+            number: {{ .Values.service.port }}
+    mirror:
+      host: {{ .Values.app_name }}-svc.{{ .Values.namespace }}.svc.cluster.local
+      subset: testversion-{{ .Values.version }}
+    mirrorPercentage:
+      value: {{ .Values.istio.mirror_percentage }}
+{{- end }}

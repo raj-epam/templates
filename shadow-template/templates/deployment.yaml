@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.app_name }}
+  name: {{ .Values.app_name }}-{{ .Values.version }}
   namespace: {{ .Values.namespace }}
   labels:
     app: {{ .Values.app_name }}
@@ -14,15 +14,15 @@ spec:
   {{- end }}
   selector:
     matchLabels:
+      version: {{ .Values.version }}
       app: {{ .Values.app_name }}
-      version: primary
 	{{- with .Values.Labels }}
         {{- toYaml . | nindent 6 }}
         {{- end }}
   template:
     metadata:
       labels:
-        version: primary
+        version: {{ .Values.version }}
         app: {{ .Values.app_name }}
 	{{- with .Values.Labels }}
         {{- toYaml . | nindent 8 }}
