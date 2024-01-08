@@ -16,7 +16,7 @@ spec:
   {{- end }}
   {{- if ne .Values.istio.gateway "" }}
   hosts:
-    - {{ .Values.istio.hosts }}
+    - {{ quote .Values.istio.hosts }}
   gateways:
     - {{ .Values.istio.gateway }}
   {{- end }}

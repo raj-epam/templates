@@ -3,7 +3,7 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
-  name: {{ .Values.app_name }}-vs
+  name: {{ .Values.app_name }}-dr
   namespace: {{ .Values.namespace }}
   labels:
     app: {{ .Values.app_name }}
