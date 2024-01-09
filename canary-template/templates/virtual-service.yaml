@@ -32,13 +32,13 @@ spec:
       - destination:
           host: {{ .Values.app_name }}-svc.{{ .Values.namespace }}.svc.cluster.local
           subset: testversion-{{ .Values.version }}
-          weight: {{ .Values.istio.weight }}
           port:
             number: {{ .Values.service.port }}
+        weight: {{ .Values.istio.weight }}
       - destination:
           host: {{ .Values.app_name }}-svc.{{ .Values.namespace }}.svc.cluster.local
           subset: primary
-          weight: {{ sub 100 .Values.istio.weight }}
           port:
             number: {{ .Values.service.port }}
+        weight: {{ sub 100 .Values.istio.weight }}    
 {{- end }}
