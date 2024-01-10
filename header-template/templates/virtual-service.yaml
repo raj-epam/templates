@@ -24,7 +24,7 @@ spec:
   - match:
     - uri:
         prefix: {{ .Values.istio.prefix }}
-    - headers:
+      headers:
         {{ .Values.istio.header_name }}:
           exact: {{ .Values.istio.header_value }}
     {{- if ne .Values.istio.rewite "" }}
